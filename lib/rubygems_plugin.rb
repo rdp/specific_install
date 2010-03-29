@@ -1,1 +1,1 @@
-require 'install_from_git/install_from_git'
+require 'rubygems/commands/git_install_command'
