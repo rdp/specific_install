@@ -7,5 +7,5 @@ require 'jeweler'
     s.authors = ["Roger Pack"]
     s.add_development_dependency 'rspec'
     s.add_development_dependency 'sane'
-    # s.add_dependency
+    s.add_dependency 'backports'
   end
