@@ -33,12 +33,14 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       # http://github.com/rdp/install_from_git [later]
       # http://host/gem_name.gem
       dir = Dir.mktmpdir
+    begin
       if loc.start_with?('http://') && loc.end_with?('.gem')
         Dir.chdir dir do
           say "downloading #{loc}"
           system("wget #{loc}")
           if install_gemspec
             puts "successfully installed"
+            return
           else
             puts "failed"
           end          
@@ -58,7 +60,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
         end
        end
       end
+      puts 'failed'
+    ensure
       FileUtils.rm_rf dir # just in case [?]       
+    end
     else
       say 'location is required'
     end
