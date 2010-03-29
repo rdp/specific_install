@@ -1,56 +1,66 @@
 require 'rubygems/command_manager'
 
-class Gem::Commands::GitInstallCommand < Gem::Command
+class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def description
-    "Allows you to install an \"edge\" gem straight from its github repository (like -g  git://github.com/rdp/ruby_tutorials_core.git)"
+    "Allows you to install an \"edge\" gem straight from its github repository or from a web site"
   end
 
   def initialize
-    super 'git_install', description
-    add_option('-g', '--git_location GIT_LOCATION', arguments) do |git_location|
-      options[:git_location] = git_location
+    super 'specific_install', description
+    add_option('-l', '--location LOCATION', arguments) do |location|
+      options[:location] = location
     end
   end
   
   def arguments
-    "GIT_LOCATION like http://github.com/rdp/ruby_tutorials_core or git://github.com/rdp/ruby_tutorials_core.git"
+    "LOCATION like http://github.com/rdp/ruby_tutorials_core or git://github.com/rdp/ruby_tutorials_core.git or http://host/gem_name.gem"
   end
   
   def usage
-    "#{program_name} [GIT_LOCATION]"
+    "#{program_name} [LOCATION]"
   end
   
   def execute
     require 'tempfile'
     require 'backports'
     require 'fileutils'
-    if loc = options[:git_location]
+    if loc = options[:location]
       # options are
       # http://github.com/githubsvnclone/rdoc.git
       # git://github.com/githubsvnclone/rdoc.git
       # git@github.com:rdp/install_from_git.git
       # http://github.com/rdp/install_from_git [later]
-      if !loc.end_with?('.git')
+      # http://host/gem_name.gem
+      dir = Dir.mktmpdir
+      if loc.start_with?('http://') && loc.end_with?('.gem')
+        Dir.chdir dir do
+          say "downloading #{loc}"
+          system("wget #{loc}")
+          if install_gemspec
+            puts "successfully installed"
+          else
+            puts "failed"
+          end          
+        end
+      elsif !loc.end_with?('.git')
        say 'error: must end with .git to be a git repository'
       else
        say 'git installing from ' + loc
-       dir = Dir.mktmpdir
        system("git clone #{loc} #{dir}")
        Dir.chdir dir do
         for command in ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'] do
           system command
           if install_gemspec
-            puts 'gem installed'
+            puts 'successfully installed'
             return
           end          
         end
        end
-       FileUtils.rm_rf dir # just in case
       end
-       
+      FileUtils.rm_rf dir # just in case [?]       
     else
-      say 'git location is required'
+      say 'location is required'
     end
   end
   
@@ -62,7 +72,7 @@ class Gem::Commands::GitInstallCommand < Gem::Command
       system("gem install *.gem")
       true
     else
-      if gem = Dir['pkg/*.gem'][0]
+      if gem = Dir['**/*.gem'][0]
         system("gem install #{gem}")
         true
       else
@@ -73,4 +83,4 @@ class Gem::Commands::GitInstallCommand < Gem::Command
   
 end
 
-Gem::CommandManager.instance.register_command :git_install
+Gem::CommandManager.instance.register_command :specific_install
