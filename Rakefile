@@ -1,9 +1,9 @@
 require 'jeweler'
   Jeweler::Tasks.new do |s|
-    s.name = "install_from_git"
+    s.name = "git_install"
     s.summary = "rubygems plugin to allow you to install an \"edge\" gem straight from its github repository"
     s.email = "rogerdpack@gmail.com"
-    s.homepage = "http://github.com/rdp/install_from_git"
+    s.homepage = "http://github.com/rdp/git_install"
     s.authors = ["Roger Pack"]
     s.add_development_dependency 'rspec'
     s.add_development_dependency 'sane'
