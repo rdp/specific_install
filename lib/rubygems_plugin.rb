@@ -1,0 +1,1 @@
+require 'install_from_git/install_from_git'
