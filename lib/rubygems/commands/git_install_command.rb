@@ -46,6 +46,7 @@ class Gem::Commands::GitInstallCommand < Gem::Command
           end          
         end
        end
+       FileUtils.rm_rf dir # just in case
       end
        
     else
