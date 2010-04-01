@@ -8,7 +8,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def initialize
     super 'specific_install', description
-    add_option('-l', '--location LOCATION', arguments) do |location|
+    add_option('-l', '--location LOCATION', arguments) do |location, something|
       options[:location] = location
     end
   end
