@@ -1,4 +1,4 @@
-specific_install gem:
+specific_install gem: 
 
 a rubygems plugin that allows you to install an "edge" gem straight from its github repository, or install one from an 
 arbitrary url web:
