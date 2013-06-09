@@ -1,0 +1,61 @@
+# Gem::SpecificInstall
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'specific_install'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install specific_install
+
+## Usage
+
+A Rubygem plugin that allows you to install an "edge" gem straight from its github repository, 
+  or install one from an arbitrary url web:
+
+ex:
+
+`
+  $ gem specific_install -l http://github.com/githubsvnclone/rdoc.git
+`
+
+### Additional Options
+
+    -l --location URL of resource 
+      Formats of URL/Resource
+        * Full URL to HTTP Repo `https://github.com/rdp/specific_install.git`
+        * Full URL to Git Repo  `git@github.com:rdp/specific_install.git`
+        * URL of Pre-Built Gem  `http://example.com/specific_install.gem`
+        * Github Repo shortcode `rdp/specific_install`
+
+    -b --branch BRANCH to use for Gem creation
+      Branch option does a `git checkout BRANCH` before `gem build GEM`
+      Example:
+          `git specific_install -l rdp/specific_install -b pre-release`
+      Note: This feature is new and may not fail gracefully.
+
+
+    `git_install` is aliased to the behavior of `specific_install`
+      This alias is shorter and is more intention revealing of the gem's behavior.
+## Internal Behavior
+
+It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory]
+
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+Enjoy!
+
+Copyright 2010-2013 Roger Pack - `http://github.com/rdp/specific_installs`
