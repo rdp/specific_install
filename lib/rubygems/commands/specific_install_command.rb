@@ -44,6 +44,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       # http://host/gem_name.gem
     dir = Dir.mktmpdir
     begin
+      loc = options[:location]
       case loc
       when /^http(.*)\.gem$/
         Dir.chdir dir do
@@ -89,16 +90,17 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       false
     end
 
-    # if gem = Dir['**/*.gem'][0]
-    #   system("gem install #{gem}")
-    #   true
-    # else
-    #   false
-    # end
+    if gem = Dir['**/*.gem'][0]
+      system("gem install #{gem}")
+      true
+    else
+      false
+    end
   end
 
   def change_to_branch(branch)
     system("git checkout #{branch}")
+    system("git branch")
   end
 end
 
