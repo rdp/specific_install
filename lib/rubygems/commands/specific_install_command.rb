@@ -42,6 +42,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       # git@github.com:rdp/install_from_git.git
       # http://github.com/rdp/install_from_git [later]
       # http://host/gem_name.gem
+      # rdp/specific_install
     dir = Dir.mktmpdir
     begin
       loc = options[:location]
@@ -51,26 +52,25 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
           say "downloading #{loc}"
           system("wget #{loc}")
           if install_gemspec
-            puts "successfully installed"
-            return
+            success_message
           else
             puts "failed"
+
           end
         end
       when /\.git$/
        say 'git installing from ' + loc
+
        system("git clone #{loc} #{dir}")
-       Dir.chdir dir do
-        ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
-          system command
-          if install_gemspec
-            puts 'Successfully installed'
-            return
-          end
-        end
-       end
+       install_from_git(dir)
+      when %r(.*/.*)
+        puts "Installing from git@github.com:#{loc}.git"
+
+        system("git clone git@github.com:#{loc}.git #{dir}")
+        install_from_git(dir)
       else
-        say 'Error: must end with .git to be a git repository'
+        puts 'Error: must end with .git to be a git repository' +
+        'or be in shorthand form: rdp/specific_install'
       end
     ensure
       FileUtils.rm_rf dir
@@ -79,6 +79,19 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   private
+
+  def install_from_git(dir)
+    Dir.chdir dir do
+      ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
+        system command
+        success_message if install_gemspec
+      end
+    end
+  end
+
+  def success_message
+   puts 'Successfully installed'
+  end
 
   def install_gemspec
     if gemspec = Dir['*.gemspec'][0]
@@ -90,12 +103,12 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       false
     end
 
-    if gem = Dir['**/*.gem'][0]
-      system("gem install #{gem}")
-      true
-    else
-      false
-    end
+    # if gem = Dir['**/*.gem'][0]
+    #   system("gem install #{gem}")
+    #   true
+    # else
+    #   false
+    # end
   end
 
   def change_to_branch(branch)
