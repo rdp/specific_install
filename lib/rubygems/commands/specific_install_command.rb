@@ -12,15 +12,15 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       options[:location] = location
     end
   end
-  
+
   def arguments
     "LOCATION like http://github.com/rdp/ruby_tutorials_core or git://github.com/rdp/ruby_tutorials_core.git or http://host/gem_name.gem"
   end
-  
+
   def usage
     "#{program_name} [LOCATION]"
   end
-  
+
   def execute
     require 'tempfile'
     require 'backports'
@@ -43,7 +43,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
             return
           else
             puts "failed"
-          end          
+          end
         end
       elsif !loc.end_with?('.git')
        say 'error: must end with .git to be a git repository'
@@ -56,21 +56,21 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
           if install_gemspec
             puts 'successfully installed'
             return
-          end          
+          end
         end
        end
       end
       puts 'failed'
     ensure
-      FileUtils.rm_rf dir # just in case [?]       
+      FileUtils.rm_rf dir # just in case [?]
     end
     else
       say 'location is required'
     end
   end
-  
+
   private
-  
+
   def install_gemspec
     if gemspec = Dir['*.gemspec'][0]
       system("gem build #{gemspec}")
@@ -85,7 +85,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       end
     end
   end
-  
+
 end
 
 Gem::CommandManager.instance.register_command :specific_install
