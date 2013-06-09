@@ -1,42 +1,61 @@
-specific_install gem: 
+# Gem::SpecificInstall
 
-a rubygems plugin that allows you to install an "edge" gem straight from its github repository, or install one from an 
-arbitrary url web:
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'specific_install'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install specific_install
+
+## Usage
+
+A Rubygem plugin that allows you to install an "edge" gem straight from its github repository, 
+  or install one from an arbitrary url web:
 
 ex:
 
-$ gem specific_install -l http://github.com/githubsvnclone/rdoc.git
+`
+  $ gem specific_install -l http://github.com/githubsvnclone/rdoc.git
+`
 
-git installing from http://github.com/githubsvnclone/rdoc.git
-...
-(in /tmp/d20100401-30708-fwpa18)
-mkdir -p pkg
-  Successfully built RubyGem
-  Name: rdoc
-  Version: 2.5
-  File: rdoc-2.5.gem
-mv rdoc-2.5.gem pkg/rdoc-2.5.gem
-Successfully installed rdoc-2.5
-1 gem installed
+### Additional Options
 
-[ it runs git clone, and rake install, install the gem, then deletes the temp directory]
+    -l --location URL of resource 
+      Formats of URL/Resource
+        * Full URL to HTTP Repo `https://github.com/rdp/specific_install.git`
+        * Full URL to Git Repo  `git@github.com:rdp/specific_install.git`
+        * URL of Pre-Built Gem  `http://example.com/specific_install.gem`
+        * Github Repo shortcode `rdp/specific_install`
 
-and a url:
+    -b --branch BRANCH to use for Gem creation
+      Branch option does a `git checkout BRANCH` before `gem build GEM`
+      Example:
+          `git specific_install -l rdp/specific_install -b pre-release`
+      Note: This feature is new and may not fail gracefully.
 
-$  gem specific_install -l http://github.com/downloads/rdp/ruby_core_ri/rdoc-2.4.3.1.gem
 
-downloading http://github.com/downloads/rdp/ruby_core_ri/rdoc-2.4.3.1.gem
-...
+    `git_install` is aliased to the behavior of `specific_install`
+      This alias is shorter and is more intention revealing of the gem's behavior.
+## Internal Behavior
 
-Saving to: `rdoc-2.4.3.1.gem'
+It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory]
 
-100%[======================================================================================================================================================>] 176,128      211K/s   in 0.8s
 
-Successfully installed rdoc-2.4.3.1
-1 gem installed
+## Contributing
 
-== Installation ==
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
 
-$ gem install specific_install
+Enjoy!
 
-Enjoy.
+Copyright 2010-2013 Roger Pack - `http://github.com/rdp/specific_installs`

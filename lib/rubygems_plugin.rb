@@ -1,1 +1,2 @@
-require 'rubygems/commands/specific_install_command'
+require "specific_install/version"
+require "rubygems/commands/specific_install_command"
