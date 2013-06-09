@@ -21,7 +21,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def arguments
     "LOCATION like http://github.com/rdp/ruby_tutorials_core or git://github.com/rdp/ruby_tutorials_core.git or http://host/gem_name.gem"
-    "BRANCH (optional) like beta"
+    "BRANCH (optional) like beta, or new-feature"
   end
 
   def usage
@@ -84,13 +84,16 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     Dir.chdir dir do
       ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
         system command
-        success_message if install_gemspec
+        if install_gemspec
+          success_message
+          exit 0
+        end
       end
     end
   end
 
   def success_message
-   puts 'Successfully installed'
+    puts 'Successfully installed'
   end
 
   def install_gemspec
@@ -100,15 +103,13 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       system("gem install *.gem")
       true
     else
-      false
+      if gem = Dir['**/*.gem'][0]
+        system("gem install #{gem}")
+        true
+      else
+        false
+      end
     end
-
-    # if gem = Dir['**/*.gem'][0]
-    #   system("gem install #{gem}")
-    #   true
-    # else
-    #   false
-    # end
   end
 
   def change_to_branch(branch)
@@ -117,5 +118,8 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 end
 
+class Gem::Commands::GitInstallCommand < Gem::Commands::SpecificInstallCommand
+end
 
 Gem::CommandManager.instance.register_command :specific_install
+Gem::CommandManager.instance.register_command :git_install
