@@ -32,6 +32,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     require 'tempfile'
     require 'backports'
     require 'fileutils'
+    require 'open-uri'
     unless options[:location]
       puts "No location received. Use `gem specific_install -l http://example.com/rdp/specific_install`"
       exit 1
@@ -50,12 +51,13 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       when /^http(.*)\.gem$/
         Dir.chdir dir do
           say "downloading #{loc}"
-          system("wget #{loc}")
+          gem_name = loc.split("/").last
+          download(loc, gem_name)
+
           if install_gemspec
             success_message
           else
             puts "failed"
-
           end
         end
       when /\.git$/
@@ -79,6 +81,12 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   private
+
+  def download( full_url, output_name )
+    File.open(output_name, "wb") do |output_file|
+      output_file.write(open(full_url).read)
+    end
+  end
 
   def install_from_git(dir)
     Dir.chdir dir do
