@@ -8,71 +8,105 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def initialize
     super 'specific_install', description
-    add_option('-l', '--location LOCATION', arguments) do |location, something|
+
+    add_option('-l', '--location LOCATION', arguments) do |location|
       options[:location] = location
     end
+
+    add_option('-b', '--branch LOCATION', arguments) do |branch|
+      options[:branch] = branch
+    end
+
   end
-  
+
   def arguments
     "LOCATION like http://github.com/rdp/ruby_tutorials_core or git://github.com/rdp/ruby_tutorials_core.git or http://host/gem_name.gem"
+    "BRANCH (optional) like beta, or new-feature"
   end
-  
+
   def usage
-    "#{program_name} [LOCATION]"
+    "#{program_name} [LOCATION] [BRANCH]"
   end
-  
+
   def execute
     require 'tempfile'
     require 'backports'
     require 'fileutils'
-    if loc = options[:location]
+    require 'open-uri'
+    unless options[:location]
+      puts "No location received. Use `gem specific_install -l http://example.com/rdp/specific_install`"
+      exit 1
+    end
       # options are
       # http://github.com/githubsvnclone/rdoc.git
       # git://github.com/githubsvnclone/rdoc.git
       # git@github.com:rdp/install_from_git.git
       # http://github.com/rdp/install_from_git [later]
       # http://host/gem_name.gem
-      dir = Dir.mktmpdir
+      # rdp/specific_install
+    dir = Dir.mktmpdir
     begin
-      if loc.start_with?('http://') && loc.end_with?('.gem')
+      loc = options[:location]
+      case loc
+      when /^http(.*)\.gem$/
         Dir.chdir dir do
           say "downloading #{loc}"
-          system("wget #{loc}")
+          gem_name = loc.split("/").last
+          download(loc, gem_name)
+
           if install_gemspec
-            puts "successfully installed"
-            return
+            success_message
           else
             puts "failed"
-          end          
+          end
         end
-      elsif !loc.end_with?('.git')
-       say 'error: must end with .git to be a git repository'
-      else
+      when /\.git$/
        say 'git installing from ' + loc
+
        system("git clone #{loc} #{dir}")
-       Dir.chdir dir do
-        for command in ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'] do
-          system command
-          if install_gemspec
-            puts 'successfully installed'
-            return
-          end          
-        end
-       end
+       install_from_git(dir)
+      when %r(.*/.*)
+        puts "Installing from git@github.com:#{loc}.git"
+
+        system("git clone git@github.com:#{loc}.git #{dir}")
+        install_from_git(dir)
+      else
+        puts 'Error: must end with .git to be a git repository' +
+        'or be in shorthand form: rdp/specific_install'
       end
-      puts 'failed'
     ensure
-      FileUtils.rm_rf dir # just in case [?]       
+      FileUtils.rm_rf dir
     end
-    else
-      say 'location is required'
+
+  end
+
+  private
+
+  def download( full_url, output_name )
+    File.open(output_name, "wb") do |output_file|
+      output_file.write(open(full_url).read)
     end
   end
-  
-  private
-  
+
+  def install_from_git(dir)
+    Dir.chdir dir do
+      ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
+        system command
+        if install_gemspec
+          success_message
+          exit 0
+        end
+      end
+    end
+  end
+
+  def success_message
+    puts 'Successfully installed'
+  end
+
   def install_gemspec
     if gemspec = Dir['*.gemspec'][0]
+      change_to_branch(options[:branch]) if options[:branch]
       system("gem build #{gemspec}")
       system("gem install *.gem")
       true
@@ -85,7 +119,15 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       end
     end
   end
-  
+
+  def change_to_branch(branch)
+    system("git checkout #{branch}")
+    system("git branch")
+  end
+end
+
+class Gem::Commands::GitInstallCommand < Gem::Commands::SpecificInstallCommand
 end
 
 Gem::CommandManager.instance.register_command :specific_install
+Gem::CommandManager.instance.register_command :git_install
