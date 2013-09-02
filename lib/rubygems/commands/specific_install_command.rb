@@ -90,6 +90,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def install_from_git(dir)
     Dir.chdir dir do
+      change_to_branch(options[:branch]) if options[:branch]
       ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
         system command
         if install_gemspec
@@ -106,7 +107,6 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def install_gemspec
     if gemspec = Dir['*.gemspec'][0]
-      change_to_branch(options[:branch]) if options[:branch]
       system("gem build #{gemspec}")
       system("gem install *.gem")
       true
