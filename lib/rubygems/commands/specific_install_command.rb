@@ -1,4 +1,9 @@
 require 'rubygems/command_manager'
+require 'rubygems/dependency_installer'
+require 'tempfile'
+require 'backports'
+require 'fileutils'
+require 'open-uri'
 
 class Gem::Commands::SpecificInstallCommand < Gem::Command
 
@@ -29,10 +34,6 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def execute
-    require 'tempfile'
-    require 'backports'
-    require 'fileutils'
-    require 'open-uri'
     unless options[:location]
       puts "No location received. Use `gem specific_install -l http://example.com/rdp/specific_install`"
       exit 1
@@ -106,18 +107,16 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def install_gemspec
-    if gemspec = Dir['*.gemspec'][0]
-      system("gem build #{gemspec}")
-      system("gem install *.gem")
-      true
+    if gemspec_file = Dir['*.gemspec'][0]
+      gemspec = Gem::Specification.load(gemspec_file)
+      gem = Gem::Builder.new(gemspec).build
+    elsif gem = Dir['**/*.gem'][0]
     else
-      if gem = Dir['**/*.gem'][0]
-        system("gem install #{gem}")
-        true
-      else
-        false
-      end
+      false
     end
+
+    inst = Gem::DependencyInstaller.new
+    inst.install gem
   end
 
   def change_to_branch(branch)
