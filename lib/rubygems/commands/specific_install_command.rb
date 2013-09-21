@@ -1,5 +1,6 @@
 require 'rubygems/command_manager'
 require 'rubygems/dependency_installer'
+require 'rubygems/builder'
 require 'tempfile'
 require 'backports'
 require 'fileutils'
@@ -8,7 +9,7 @@ require 'open-uri'
 class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def description
-    "Allows you to install an \"edge\" gem straight from its github repository or from a web site"
+    "Allows you to install an 'edge' gem straight from its github repository or from a web site"
   end
 
   def initialize
