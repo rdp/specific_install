@@ -1,1 +1,7 @@
 require "bundler/gem_tasks"
+
+task :rubygems do
+  sh "gem uninstall specific_install --executables"
+  Rake::Task["release"].invoke
+  sh "gem install specific_install"
+end
