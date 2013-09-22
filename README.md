@@ -22,8 +22,39 @@ A Rubygem plugin that allows you to install an "edge" gem straight from its gith
 ex:
 
 `
+  $ gem specific_install https://github.com/githubsvnclone/rdoc.git
+`
+
+Or more explicitly:
+
+`
   $ gem specific_install -l http://github.com/githubsvnclone/rdoc.git
 `
+
+Or very tersely:
+
+`gem specific_install githubsvnclone/rdoc`
+
+Or a specific branch
+
+`
+  $ gem specific_install http://github.com/githubsvnclone/rdoc.git edge
+`
+
+Or a specific branch in an explicit way
+
+`
+  $ gem specific_install -l http://github.com/githubsvnclone/rdoc.git -b edge
+`
+
+The following URI types are accepted:
+
+- http(s)://github.com/rdp/specific_install.git
+- http(s)://github.com/rdp/specific_install-current.gem
+- http://github.com/rdp/specific_install.git
+- git://github.com:rdp/specific_install.git
+- rdp/specific_install
+
 
 ### Additional Options
 
