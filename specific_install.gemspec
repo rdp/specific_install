@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.version       = SpecificInstall::VERSION
   s.description   = %q{rubygems plugin that allows you you to install a gem from from its github repository (like 'edge'), or from an arbitrary URL}
   s.summary       = "rubygems plugin that allows you you to install a gem from from its github repository (like 'edge'), or from an arbitrary URL"
-  s.authors       = ["Roger Pack"]
-  s.email         = "rogerdpack@gmail.com"
+  s.authors       = ["Roger Pack", "Zander Hill"]
+  s.email         = ["rogerdpack@gmail.com", "zander@civet.ws" ]
   s.homepage      = "https://github.com/rdp/specific_install"
   s.license       = "MIT"
 
@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sane'
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "rake"
-  s.add_development_dependency "rspec"
   s.add_development_dependency "simplecov"
   s.add_development_dependency "simplecov-vim"
 end
