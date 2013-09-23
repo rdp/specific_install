@@ -52,7 +52,7 @@ The following URI types are accepted:
 - http(s)://github.com/rdp/specific_install.git
 - http(s)://github.com/rdp/specific_install-current.gem
 - http://github.com/rdp/specific_install.git
-- git://github.com:rdp/specific_install.git
+- git@github.com:rdp/specific_install.git
 - rdp/specific_install
 
 
