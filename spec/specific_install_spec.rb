@@ -50,6 +50,17 @@ describe Gem::Commands::SpecificInstallCommand do
       end
     end
 
+    describe "#download" do
+      it "downloads a gem" do
+        Dir.mktmpdir do |tmpdir|
+          url = "https://rubygems.org/downloads/specific_install-0.2.7.gem"
+          output_name = "specific_install.gem"
+          subject.download(url, output_name)
+          expect(File.exists?(output_name)).to be_true
+        end
+      end
+    end
+
     describe "#install_shorthand" do
       it "formats the shorthand into a git repo" do
         subject.instance_variable_set(:@loc, "bar/zoz")
