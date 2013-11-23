@@ -104,6 +104,13 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def install_from_git(dir)
     Dir.chdir dir do
       change_to_branch(@branch) if @branch
+      # reliable method
+      if install_gemspec
+        success_message
+        exit 0
+      end
+
+      # legacy method
       ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
         system command
         if install_gemspec
