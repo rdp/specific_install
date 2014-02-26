@@ -16,11 +16,11 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     super 'specific_install', description
     @output = output
 
-    add_option('-l', '--location LOCATION', arguments) do |location|
+    add_option('-l', '--location LOCATION', arguments) do |location, options|
       options[:location] = location
     end
 
-    add_option('-b', '--branch LOCATION', arguments) do |branch|
+    add_option('-b', '--branch LOCATION', arguments) do |branch, options|
       options[:branch] = branch
     end
 
@@ -32,14 +32,14 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def usage
-    "#{program_name} [LOCATION] [BRANCH]"
+    "#{program_name} [LOCATION] [BRANCH] (or command line options for the same)"
   end
 
   def execute
     @loc ||= set_location
     @branch ||= set_branch if set_branch
     if @loc.nil?
-      raise ArgumentError, "No location received. Use `gem specific_install -l http://example.com/rdp/specific_install`"
+      raise ArgumentError, "No location received. Use like `gem specific_install -l http://example.com/rdp/specific_install`"
     end
     Dir.mktmpdir do |dir|
       @dir = dir
@@ -112,6 +112,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
       # legacy method
       ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
+        puts "attempting #{command}..."
         system command
         if install_gemspec
           success_message
@@ -135,9 +136,12 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def install_gemspec
     gem = find_or_build_gem
-
-    inst = Gem::DependencyInstaller.new
-    inst.install gem
+    if gem
+      inst = Gem::DependencyInstaller.new
+      inst.install gem
+    else
+      nil
+    end
   end
 
   def find_or_build_gem
@@ -147,7 +151,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     elsif gemfile
       gemfile
     else
-      raise ArgumentError, "Can't find gemspec or gem"
+      nil
     end
   end
 
