@@ -78,7 +78,10 @@ The following URI types are accepted:
 
 It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory]
 
+## Compatibility
 
+v0.2.10 is known to work against Rubygems v2.2.2 and has a compatibility issue with Rubygems v1.8.25 (possible other older Rubygems).
+Work-arounds: Upgrade Rubygems via `rvm rubygems current` or install older version of `specific_install`.
 ## Contributing
 
 1. Fork it
