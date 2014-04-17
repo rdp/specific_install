@@ -53,6 +53,9 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       install_gem
     when /\.git$/
       install_git
+    when /^https?(.*)$/
+      install_http_repo
+      # install_gem
     when %r(.*/.*)
       install_shorthand
     else
@@ -72,6 +75,16 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
         output.puts "Failed"
       end
     end
+  end
+
+  def install_http_repo
+    output.puts 'http installing from ' + @loc
+
+    @loc = [@loc, '.git'].join unless @loc[/\.git$/]
+
+    redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
+    system("git clone #{@loc} #{@dir} #{redirect_for_specs}")
+    install_from_git(@dir)
   end
 
   def gem_name
