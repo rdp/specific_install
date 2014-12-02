@@ -92,4 +92,4 @@ Work-arounds: Upgrade Rubygems via `rvm rubygems current` or install older versi
 
 Enjoy!
 
-Copyright 2010-2013 Roger Pack - `http://github.com/rdp/specific_installs`
+Copyright 2010-2014 Roger Pack - `http://github.com/rdp/specific_install`
