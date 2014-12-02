@@ -1,7 +1,7 @@
 # coding: utf-8
 $:.unshift File.expand_path('../lib', __FILE__)
 lib = File.expand_path('../lib', __FILE__)
-require 'specific_install/version'
+require "#{lib}/specific_install/version"
 
 Gem::Specification.new do |s|
 
