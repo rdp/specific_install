@@ -117,13 +117,14 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def install_from_git(dir)
     Dir.chdir dir do
       change_to_branch(@branch) if @branch
+      system("git submodule update --init --recursive") # issue 25
       # reliable method
       if install_gemspec
         success_message
         exit 0
       end
 
-      # legacy method
+      # legacy methods
       ['', 'rake gemspec', 'rake gem', 'rake build', 'rake package'].each do |command|
         puts "attempting #{command}..."
         system command
