@@ -47,16 +47,24 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     end
   end
 
+  def break_unless_git_present
+    unless system("which git")
+      abort("Please install git before using a git based link for specific_install")
+    end
+  end
+
   def determine_source_and_install
     case @loc
     when /^https?(.*)\.gem$/
       install_gem
     when /\.git$/
+      break_unless_git_present
       install_git
     when /^https?(.*)$/
+      break_unless_git_present
       install_http_repo
-      # install_gem
     when %r(.*/.*)
+      break_unless_git_present
       install_shorthand
     else
       warn 'Error: must end with .git to be a git repository' +
