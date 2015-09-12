@@ -47,6 +47,12 @@ Or a specific branch in an explicit way
   $ gem specific_install -l http://github.com/githubsvnclone/rdoc.git -b edge
 `
 
+Or a specific subdirectory in a repo 
+
+`
+  $ gem specific_install https://github.com/orlandohill/waxeye -d src/ruby
+`
+
 The following URI types are accepted:
 
 - http(s)://github.com/rdp/specific_install.git
@@ -71,6 +77,9 @@ The following URI types are accepted:
           `git specific_install -l rdp/specific_install -b pre-release`
       Note: This feature is new and may not fail gracefully.
 
+    -d --directory DIRECTORY in source
+      This will change the directory in the downloaded source directory
+      before building the gem. 
 
     `git_install` is aliased to the behavior of `specific_install`
       This alias is shorter and is more intention revealing of the gem's behavior.

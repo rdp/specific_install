@@ -24,11 +24,15 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       options[:branch] = branch
     end
 
+    add_option('-d', '--directory DIRECTORY', arguments) do |directory, options|
+      options[:directory] = directory
+    end
   end
 
   def arguments
     "LOCATION like http://github.com/rdp/ruby_tutorials_core or git://github.com/rdp/ruby_tutorials_core.git or http://host/gem_name.gem\n" +
-    "BRANCH (optional) like beta, or new-feature"
+    "BRANCH (optional) like beta, or new-feature\n" +
+    "DIRECTORY (optional) This will change the directory in the downloaded source directory before building the gem."
   end
 
   def usage
@@ -42,7 +46,13 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       raise ArgumentError, "No location received. Use like `gem specific_install -l http://example.com/rdp/specific_install`"
     end
     Dir.mktmpdir do |dir|
-      @dir = dir
+      if subdir = options[:directory]
+        abort("Subdir '#{subdir}' is not a valid directory") unless valid_subdir?(subdir)
+        @top_dir = dir
+        @src_dir = File.join(dir, subdir)
+      else
+        @top_dir = @src_dir = dir
+      end
       determine_source_and_install
     end
   end
@@ -73,7 +83,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def install_gem
-    Dir.chdir @dir do
+    Dir.chdir @top_dir do
       output.puts "downloading #{@loc}"
       download(@loc, gem_name)
 
@@ -91,8 +101,8 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     @loc = [@loc, '.git'].join unless @loc[/\.git$/]
 
     redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
-    system("git clone #{@loc} #{@dir} #{redirect_for_specs}")
-    install_from_git(@dir)
+    system("git clone #{@loc} #{@top_dir} #{redirect_for_specs}")
+    install_from_git(@src_dir)
   end
 
   def gem_name
@@ -103,16 +113,16 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     output.puts 'git installing from ' + @loc
 
     redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
-    system("git clone #{@loc} #{@dir} #{redirect_for_specs}")
-    install_from_git(@dir)
+    system("git clone #{@loc} #{@top_dir} #{redirect_for_specs}")
+    install_from_git(@src_dir)
   end
 
   def install_shorthand
     output.puts "Installing from git@github.com:#{@loc}.git"
 
     redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
-    system("git clone git@github.com:#{@loc}.git #{@dir} #{redirect_for_specs}")
-    install_from_git(@dir)
+    system("git clone git@github.com:#{@loc}.git #{@top_dir} #{redirect_for_specs}")
+    install_from_git(@src_dir)
   end
 
   def download( full_url, output_name )
@@ -124,8 +134,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def install_from_git(dir)
     Dir.chdir dir do
-      change_to_branch(@branch) if @branch
-      system("git submodule update --init --recursive") # issue 25
+      Dir.chdir @top_dir do
+        change_to_branch(@branch) if @branch
+        system("git submodule update --init --recursive") # issue 25
+      end
       # reliable method
       if install_gemspec
         success_message
@@ -200,6 +212,15 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def change_to_branch(branch)
     system("git checkout #{branch}")
     system("git branch")
+  end
+
+  DOTDOT_REGEX = /(?:#{File::PATH_SEPARATOR}|\A)\.\.(?:#{File::PATH_SEPARATOR}|\z)/.freeze
+  ABS_REGEX = /\A#{File::PATH_SEPARATOR}/.freeze
+
+  def valid_subdir?(subdir)
+    !subdir.empty? &&
+      subdir !~ DOTDOT_REGEX &&
+      subdir !~ ABS_REGEX
   end
 end
 
