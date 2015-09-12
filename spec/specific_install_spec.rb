@@ -39,7 +39,7 @@ describe Gem::Commands::SpecificInstallCommand do
           dir
         end
       end
-      subject.instance_variable_set(:@dir, "foo")
+      subject.instance_variable_set(:@top_dir, "foo")
     end
     describe "#install_git" do
       before do
@@ -218,4 +218,4 @@ describe "Integration Tests" do
       expect(stdout).to match(/Successfully installed/)
     end
   end
-end
+end if ENV['SPECIFIC_INSTALL_INTEGRATION_SPECS']
