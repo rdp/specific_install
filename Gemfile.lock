@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    specific_install (0.2.8)
+    specific_install (0.3.0)
       backports
 
 GEM
   remote: https://rubygems.org/
   specs:
-    backports (3.3.4)
+    backports (3.6.0)
     diff-lcs (1.2.4)
     multi_json (1.8.0)
     os (0.9.6)
@@ -39,3 +39,6 @@ DEPENDENCIES
   simplecov
   simplecov-vim
   specific_install!
+
+BUNDLED WITH
+   1.10.6
