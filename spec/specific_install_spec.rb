@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'spec_helper'
+require './spec_helper'
 require 'stringio'
 require 'open3'
 
