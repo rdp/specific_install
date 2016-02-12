@@ -133,11 +133,12 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def install_from_git(dir)
+    Dir.chdir @top_dir do
+      change_to_branch(@branch) if @branch
+      system("git submodule update --init --recursive") # issue 25
+    end
+
     Dir.chdir dir do
-      Dir.chdir @top_dir do
-        change_to_branch(@branch) if @branch
-        system("git submodule update --init --recursive") # issue 25
-      end
       # reliable method
       if install_gemspec
         success_message
