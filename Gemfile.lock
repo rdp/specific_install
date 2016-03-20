@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    specific_install (0.3.1)
+    specific_install (0.3.2)
       backports
 
 GEM
   remote: https://rubygems.org/
   specs:
-    backports (3.6.0)
+    backports (3.6.8)
     diff-lcs (1.2.4)
     multi_json (1.8.0)
     os (0.9.6)
