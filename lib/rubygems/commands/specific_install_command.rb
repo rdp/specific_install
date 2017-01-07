@@ -1,7 +1,6 @@
 require 'rubygems/command_manager'
 require 'rubygems/dependency_installer'
 require 'tempfile'
-require 'backports'
 require 'fileutils'
 require 'open-uri'
 
