@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.platform      = Gem::Platform::RUBY
   s.rubyforge_project = '[none]'
 
-  s.add_dependency 'backports'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'sane'
   s.add_development_dependency "bundler", "~> 1.3"
