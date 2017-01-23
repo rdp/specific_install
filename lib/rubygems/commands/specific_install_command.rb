@@ -26,6 +26,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     add_option('-d', '--directory DIRECTORY', arguments) do |directory, options|
       options[:directory] = directory
     end
+
+    add_option('-r', '--ref COMMIT-ISH', arguments) do |ref, options|
+      options[:ref] = ref
+    end
   end
 
   def arguments
@@ -41,6 +45,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def execute
     @loc ||= set_location
     @branch ||= set_branch if set_branch
+    @ref ||= set_ref
     if @loc.nil?
       raise ArgumentError, "No location received. Use like `gem specific_install -l http://example.com/rdp/specific_install`"
     end
@@ -134,6 +139,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def install_from_git(dir)
     Dir.chdir @top_dir do
       change_to_branch(@branch) if @branch
+      reset_to_commit(@ref) if @ref
       system("git submodule update --init --recursive") # issue 25
     end
 
@@ -162,6 +168,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def set_branch
     options[:branch] || options[:args][1]
+  end
+
+  def set_ref
+    options[:ref] || options[:args][2]
   end
 
   def success_message
@@ -212,6 +222,11 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def change_to_branch(branch)
     system("git checkout #{branch}")
     system("git branch")
+  end
+
+  def reset_to_commit(ref)
+    system("git reset --hard #{ref}")
+    system("git show -q")
   end
 
   DOTDOT_REGEX = /(?:#{File::PATH_SEPARATOR}|\A)\.\.(?:#{File::PATH_SEPARATOR}|\z)/.freeze
