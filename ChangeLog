@@ -1,2 +1,4 @@
+0.3.3
+  Added an option '-r' to specify commit-ish
 0.2.12
   automatically clone submodules if any are there
