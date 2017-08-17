@@ -130,9 +130,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def download( full_url, output_name )
-    File.open(output_name, "wb") do |output_file|
-      uri = URI.parse(full_url)
-      output_file.write(uri.read)
+    require 'open-uri'
+    body = URI.parse(full_url).read
+    File.open(output_name, "wb") do |f|
+      f.write(body)
     end
   end
 
