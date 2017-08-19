@@ -1,8 +1,5 @@
 require 'rubygems/command_manager'
 require 'rubygems/dependency_installer'
-require 'tempfile'
-require 'fileutils'
-require 'open-uri'
 
 class Gem::Commands::SpecificInstallCommand < Gem::Command
   attr_accessor :output
@@ -49,6 +46,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     if @loc.nil?
       raise ArgumentError, "No location received. Use like `gem specific_install -l http://example.com/rdp/specific_install`"
     end
+    require 'tempfile'
     Dir.mktmpdir do |dir|
       if subdir = options[:directory]
         abort("Subdir '#{subdir}' is not a valid directory") unless valid_subdir?(subdir)
@@ -59,6 +57,13 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       end
       determine_source_and_install
     end
+  end
+
+  private
+
+  def git(*commands)
+    system "git", *commands
+    raise "'$ git #{commands.join(' ')}' exited with an error" if $?.exitstatus != 0
   end
 
   def break_unless_git_present
@@ -105,7 +110,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     @loc = [@loc, '.git'].join unless @loc[/\.git$/]
 
     redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
-    system("git clone #{@loc} #{@top_dir} #{redirect_for_specs}")
+    git "clone", @loc, @top_dir, redirect_for_specs
     install_from_git(@src_dir)
   end
 
@@ -117,7 +122,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     output.puts 'git installing from ' + @loc
 
     redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
-    system("git clone #{@loc} #{@top_dir} #{redirect_for_specs}")
+    git "clone", @loc, @top_dir, redirect_for_specs
     install_from_git(@src_dir)
   end
 
@@ -125,7 +130,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     output.puts "Installing from git@github.com:#{@loc}.git"
 
     redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
-    system("git clone git@github.com:#{@loc}.git #{@top_dir} #{redirect_for_specs}")
+    git "clone", "git@github.com:#{@loc}.git", @topdir, redirect_for_specs
     install_from_git(@src_dir)
   end
 
@@ -141,7 +146,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     Dir.chdir @top_dir do
       change_to_branch(@branch) if @branch
       reset_to_commit(@ref) if @ref
-      system("git submodule update --init --recursive") # issue 25
+      git "submodule", "update", "--init", "--recursive" # Issue 25
     end
 
     Dir.chdir dir do
@@ -221,13 +226,13 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def change_to_branch(branch)
-    system("git checkout #{branch}")
-    system("git branch")
+    git "checkout", branch
+    git "branch"
   end
 
   def reset_to_commit(ref)
-    system("git reset --hard #{ref}")
-    system("git show -q")
+    git "reset", "--hard", ref
+    git "show", "-q"
   end
 
   DOTDOT_REGEX = /(?:#{File::PATH_SEPARATOR}|\A)\.\.(?:#{File::PATH_SEPARATOR}|\z)/.freeze
