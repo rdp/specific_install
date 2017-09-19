@@ -16,7 +16,7 @@ Or install it yourself as:
 
 ## Usage
 
-A Rubygem plugin that allows you to install an "edge" gem straight from its github repository, 
+A Rubygem plugin that allows you to install an "edge" gem straight from its github repository,
   or install one from an arbitrary url web:
 
 ex:
@@ -47,7 +47,7 @@ Or a specific branch in an explicit way
   $ gem specific_install -l http://github.com/githubsvnclone/rdoc.git -b edge
 `
 
-Or a specific subdirectory in a repo 
+Or a specific subdirectory in a repo
 
 `
   $ gem specific_install https://github.com/orlandohill/waxeye -d src/ruby
@@ -64,7 +64,7 @@ The following URI types are accepted:
 
 ### Additional Options
 
-    -l --location URL of resource 
+    -l --location URL of resource
       Formats of URL/Resource
         * Full URL to HTTP Repo `https://github.com/rdp/specific_install.git`
         * Full URL to Git Repo  `git@github.com:rdp/specific_install.git`
@@ -79,13 +79,16 @@ The following URI types are accepted:
 
     -d --directory DIRECTORY in source
       This will change the directory in the downloaded source directory
-      before building the gem. 
+      before building the gem.
+
+    -r, --ref COMMIT-ISH to use for Gem creation
+      Ref option does a `git reset --hard COMMIT-ISH` before `gem build GEM`
 
     `git_install` is aliased to the behavior of `specific_install`
       This alias is shorter and is more intention revealing of the gem's behavior.
 ## Internal Behavior
 
-It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory]
+It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory.
 
 ## Compatibility
 
