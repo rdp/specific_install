@@ -88,7 +88,7 @@ The following URI types are accepted:
       This alias is shorter and is more intention revealing of the gem's behavior.
 ## Internal Behavior
 
-It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory]
+It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory.
 
 ## Compatibility
 
