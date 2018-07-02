@@ -27,6 +27,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     add_option('-r', '--ref COMMIT-ISH', arguments) do |ref, options|
       options[:ref] = ref
     end
+
+    add_option('-u', '--user-install', arguments) do |userinstall, options|
+      options[:userinstall] = userinstall
+    end
   end
 
   def arguments
@@ -187,7 +191,9 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def install_gemspec
     gem = find_or_build_gem
     if gem
-      inst = Gem::DependencyInstaller.new
+      install_options = {}
+      install_options[:user_install] = options[:userinstall].nil? ? nil : true
+      inst = Gem::DependencyInstaller.new install_options
       inst.install gem
     else
       nil
