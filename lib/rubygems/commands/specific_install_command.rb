@@ -66,8 +66,8 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   private
 
   def git(*commands)
-    system "git", *commands
-    raise "'$ git #{commands.join(' ')}' exited with an error" if $?.exitstatus != 0
+    system "git #{commands.join(' ').chomp(' ')}"
+    raise "'$ git #{commands.join(' ').chomp(' ')}' exited with an error" if $?.exitstatus != 0
   end
 
   def break_unless_git_present
