@@ -53,6 +53,12 @@ Or a specific subdirectory in a repo
   $ gem specific_install https://github.com/orlandohill/waxeye -d src/ruby
 `
 
+Or install in the users personal gem directory
+
+`
+  $ gem specific_install https://github.com/orlandohill/waxeye -u
+`
+
 The following URI types are accepted:
 
 - http(s)://github.com/rdp/specific_install.git
@@ -83,6 +89,9 @@ The following URI types are accepted:
 
     -r, --ref COMMIT-ISH to use for Gem creation
       Ref option does a `git reset --hard COMMIT-ISH` before `gem build GEM`
+
+    -u, --user-install to indicate that the gem should be unpacked into the users personal gem directory.
+      This will install the gem in the user folder making it possible to use specific_install without root access.
 
     `git_install` is aliased to the behavior of `specific_install`
       This alias is shorter and is more intention revealing of the gem's behavior.
