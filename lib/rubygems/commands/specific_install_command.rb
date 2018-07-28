@@ -16,7 +16,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       options[:location] = location
     end
 
-    add_option('-b', '--branch LOCATION', arguments) do |branch, options|
+    add_option('-b', '--branch BRANCH', arguments) do |branch, options|
       options[:branch] = branch
     end
 
