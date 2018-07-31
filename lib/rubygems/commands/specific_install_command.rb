@@ -134,7 +134,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     output.puts "Installing from git@github.com:#{@loc}.git"
 
     redirect_for_specs = ENV.fetch( "SPECIFIC_INSTALL_SPEC" ) { "" }
-    git "clone", "git@github.com:#{@loc}.git", @topdir, redirect_for_specs
+    git "clone", "git@github.com:#{@loc}.git", @top_dir, redirect_for_specs
     install_from_git(@src_dir)
   end
 
