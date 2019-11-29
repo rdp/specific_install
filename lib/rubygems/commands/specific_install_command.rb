@@ -233,7 +233,6 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def change_to_branch(branch)
     git "checkout", branch
-    git "branch"
   end
 
   def reset_to_commit(ref)
