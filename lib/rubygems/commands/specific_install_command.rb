@@ -71,7 +71,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   end
 
   def break_unless_git_present
-    unless system("bash -c 'type -a git'")
+    unless system("git --version") || system("sh -c 'command -V git'")
       abort("Please install git before using a git based link for specific_install")
     end
   end
