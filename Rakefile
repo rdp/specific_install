@@ -2,7 +2,7 @@ require 'rubygems'
 require "bundler/gem_tasks"
 
 # how to:
-# rake version:bump:patch
+# edit lib/specific_install/version.rb
 # rake release, seems to work!
 
 desc "Uninstall specific_install and release, then reinstall"
