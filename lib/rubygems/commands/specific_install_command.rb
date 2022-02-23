@@ -28,6 +28,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       options[:ref] = ref
     end
 
+    add_option('-t', '--tag TAG', arguments) do |tag, options|
+      options[:tag] = tag
+    end
+
     add_option('-u', '--user-install', arguments) do |userinstall, options|
       options[:userinstall] = userinstall
     end
@@ -47,6 +51,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     @loc ||= set_location
     @branch ||= set_branch if set_branch
     @ref ||= set_ref
+    @tag ||= set_tag
     if @loc.nil?
       raise ArgumentError, "No location received. Use like `gem specific_install -l http://example.com/rdp/specific_install`"
     end
@@ -150,6 +155,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     Dir.chdir @top_dir do
       change_to_branch(@branch) if @branch
       reset_to_commit(@ref) if @ref
+      change_to_tag(@tag) if @tag
       git "submodule", "update", "--init", "--recursive" # Issue 25
     end
 
@@ -182,6 +188,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def set_ref
     options[:ref] || options[:args][2]
+  end
+
+  def set_tag
+    options[:tag]
   end
 
   def success_message
@@ -238,6 +248,10 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
   def reset_to_commit(ref)
     git "reset", "--hard", ref
     git "show", "-q"
+  end
+
+  def change_to_tag(tag)
+    git "checkout", tag
   end
 
   DOTDOT_REGEX = /(?:#{File::PATH_SEPARATOR}|\A)\.\.(?:#{File::PATH_SEPARATOR}|\z)/.freeze
