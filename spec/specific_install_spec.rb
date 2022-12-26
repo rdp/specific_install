@@ -57,7 +57,7 @@ describe Gem::Commands::SpecificInstallCommand do
           url = "https://rubygems.org/downloads/specific_install-0.2.7.gem"
           output_name = "specific_install.gem"
           subject.download(url, output_name)
-          expect(File.exists?(output_name)).to be_true
+          expect(File.exist?(output_name)).to be_true
         end
       end
     end
