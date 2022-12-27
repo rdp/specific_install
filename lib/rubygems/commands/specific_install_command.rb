@@ -217,7 +217,7 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
 
   def gemspec_exists?(name = "*.gemspec")
     if gemspec_file(name)
-      File.exists?(gemspec_file(name))
+      File.exist?(gemspec_file(name))
     else
       false
     end
