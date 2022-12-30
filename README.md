@@ -17,9 +17,9 @@ Or install it yourself as:
 ## Usage
 
 A Rubygem plugin that allows you to install an "edge" gem straight from its github repository,
-  or install one from an arbitrary url web:
+  or install one from an arbitrary web url:
 
-ex:
+examples:
 
 `
   $ gem specific_install https://github.com/githubsvnclone/rdoc.git
@@ -33,7 +33,9 @@ Or more explicitly:
 
 Or very tersely:
 
-`gem specific_install githubsvnclone/rdoc`
+`
+  $ gem specific_install githubsvnclone/rdoc
+`
 
 Or a specific branch
 
@@ -64,9 +66,9 @@ The following URI types are accepted:
 - http(s)://github.com/rdp/specific_install.git
 - http(s)://github.com/rdp/specific_install-current.gem
 - http://github.com/rdp/specific_install.git
+- http://somewhere_else.com/rdp/specific_install.git
 - git@github.com:rdp/specific_install.git
-- rdp/specific_install
-
+- rdp/specific_install # implies github
 
 ### Additional Options
 
@@ -95,6 +97,10 @@ The following URI types are accepted:
 
     `git_install` is aliased to the behavior of `specific_install`
       This alias is shorter and is more intention revealing of the gem's behavior.
+      
+    -t, --tag to indicate git tag to be checked out.
+      This will use/install a specific git tag.
+      
 ## Internal Behavior
 
 It runs `git clone`, and `rake install,` install the gem, then deletes the temp directory.
