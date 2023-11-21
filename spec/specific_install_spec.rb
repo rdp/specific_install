@@ -1,7 +1,8 @@
 require 'rubygems'
-require './spec_helper'
+require_relative './spec_helper'
 require 'stringio'
 require 'open3'
+require 'tmpdir'
 
 describe Gem::Commands::SpecificInstallCommand do
   before do
@@ -28,7 +29,7 @@ describe Gem::Commands::SpecificInstallCommand do
   describe "#gem_name" do
     it "sets gem_name from location" do
       subject.instance_variable_set(:@loc, "stuff/foo/bar")
-      expect(subject.gem_name).to eq("bar")
+      expect(subject.send(:gem_name)).to eq("bar")
     end
   end
 
@@ -47,7 +48,7 @@ describe Gem::Commands::SpecificInstallCommand do
       end
       it "sends correct command to system" do
         subject.should_receive(:system).with(/git clone bar foo/)
-        subject.install_git
+        subject.send(:install_git)
       end
     end
 
@@ -56,8 +57,8 @@ describe Gem::Commands::SpecificInstallCommand do
         Dir.mktmpdir do |tmpdir|
           url = "https://rubygems.org/downloads/specific_install-0.2.7.gem"
           output_name = "specific_install.gem"
-          subject.download(url, output_name)
-          expect(File.exist?(output_name)).to be_true
+          subject.send(:download, url, output_name)
+          expect(File.exist?(output_name)).to be true
         end
       end
     end
@@ -66,7 +67,7 @@ describe Gem::Commands::SpecificInstallCommand do
       it "formats the shorthand into a git repo" do
         subject.instance_variable_set(:@loc, "bar/zoz")
         subject.should_receive(:system).with(%r{git clone git@github.com:bar/zoz.git foo})
-        subject.install_shorthand
+        subject.send(:install_shorthand)
       end
     end
   end
@@ -74,34 +75,39 @@ describe Gem::Commands::SpecificInstallCommand do
   describe "#success_message" do
     it "returns correct message" do
       subject.output.should_receive(:puts).with('Successfully installed')
-      subject.success_message
+      subject.send(:success_message)
     end
   end
 
   describe "#install_gemspec" do
     context "when no gemspec or gem" do
       xit "returns false" do
-        expect( subject.install_gemspec ).to eq(false)
+        expect( subject.send(:install_gemspec) ).to eq(false)
       end
     end
   end
 
   describe "#gemspec_exists?" do
     it "response true to when exists" do
-      expect( subject.gemspec_exists? ).to be_true
+      expect( subject.send(:gemspec_exists?) ).to be true
     end
 
     it "responds false when not present" do
-      expect( subject.gemspec_exists?("*.gemNOTPRESENT") ).to be_false
+      expect( subject.send(:gemspec_exists?, "*.gemNOTPRESENT") ).to be false
     end
   end
 
   describe "#gemfile" do
     it "response false when not existing" do
-      expect( subject.gemfile("*.gemNOTPRESENT") ).to be_false
+      expect( subject.send(:gemfile, "*.gemNOTPRESENT") ).to be false
     end
     it "response true to when exists" do
-      expect( subject.gemfile("**/*.gem") ).to be_true
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          Pathname("foo.gem").write('foo')
+          expect(subject.send(:gemfile, "**/*.gem")).to be_truthy
+        end
+      end
     end
   end
 
@@ -109,49 +115,49 @@ describe Gem::Commands::SpecificInstallCommand do
     it "executes http gem requests" do
         subject.instance_variable_set(:@loc, "http://example.com/rad.gem")
         subject.should_receive(:install_gem)
-        subject.determine_source_and_install
+        subject.send(:determine_source_and_install)
     end
     it "executes https gem requests" do
         subject.instance_variable_set(:@loc, "https://example.com/rad.gem")
         subject.should_receive(:install_gem)
-        subject.determine_source_and_install
+        subject.send(:determine_source_and_install)
     end
     it "executes https git install requests" do
         subject.instance_variable_set(:@loc, "https://example.com/rad.git")
         subject.should_receive(:install_git)
-        subject.determine_source_and_install
+        subject.send(:determine_source_and_install)
     end
     it "executes git url git install requests" do
         subject.instance_variable_set(:@loc, "git@github.com:example/rad.git")
         subject.should_receive(:install_git)
-        subject.determine_source_and_install
+        subject.send(:determine_source_and_install)
     end
     it "executes shorthand github install requests" do
         subject.instance_variable_set(:@loc, "example/rad")
         subject.should_receive(:install_shorthand)
-        subject.determine_source_and_install
+        subject.send(:determine_source_and_install)
     end
     it "executes shorthand github install requests" do
         subject.instance_variable_set(:@loc, "example")
         subject.should_receive(:warn)
-        subject.determine_source_and_install
+        subject.send(:determine_source_and_install)
     end
   end
 
   describe "#set_location" do
     it "sets from options[location]" do
       subject.options[:location] = "example"
-      expect( subject.set_location ).to eq("example")
+      expect( subject.send(:set_location) ).to eq("example")
     end
     it "sets from options[args]" do
       subject.options[:location] = nil
       subject.options[:args] = ["args"]
-      expect( subject.set_location ).to eq("args")
+      expect( subject.send(:set_location) ).to eq("args")
     end
     it "sets neither and results in nil" do
       subject.options[:location] = nil
       subject.options[:args] = []
-      expect( subject.set_location ).to be_nil
+      expect( subject.send(:set_location) ).to be_nil
     end
   end
 
