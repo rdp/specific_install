@@ -4,4 +4,5 @@ InstalledFiles
 pkg
 *.gem
 .bundle
-coverage
+coverage/
+coverage.vim
