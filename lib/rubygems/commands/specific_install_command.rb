@@ -39,6 +39,18 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
     add_option('-i', '--install-dir INSTALL_DIR', arguments) do |installdir, options|
       options[:installdir] = installdir
     end
+
+    add_option('-f', '--force', arguments) do |force, options|
+      options[:force] = force
+    end
+
+    add_option('--ignore-dependencies', arguments) do |ignore_dependencies, options|
+      options[:ignore_dependencies] = ignore_dependencies
+    end
+
+    add_option('--minimal-deps', arguments) do |minimal_deps, options|
+      options[:minimal_deps] = minimal_deps
+    end
   end
 
   def arguments
@@ -213,6 +225,9 @@ class Gem::Commands::SpecificInstallCommand < Gem::Command
       install_options = {}
       install_options[:user_install] = options[:userinstall].nil? ? nil : true
       install_options[:install_dir] = options[:installdir] if options[:installdir]
+      install_options[:force] = options[:force].nil? ? nil : true
+      install_options[:ignore_dependencies] = options[:ignore_dependencies].nil? ? nil : true
+      install_options[:minimal_deps] = options[:minimal_deps].nil? ? nil : true
       inst = Gem::DependencyInstaller.new install_options
       inst.install gem
     else
